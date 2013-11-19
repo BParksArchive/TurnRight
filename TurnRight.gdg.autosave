@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <Project>
-    <GDVersion Major="3" Minor="2" Build="63" Revision="0" />
+    <GDVersion Major="3" Minor="2" Build="65" Revision="0" />
     <Info winExecutableFilename="" winExecutableIconFile="" linuxExecutableFilename="" macExecutableFilename="" useExternalSourceFiles="false">
         <Nom value="Project" />
         <Auteur value="" />
@@ -41,6 +41,7 @@
         <Resources>
             <Resource kind="image" name="wall_square.jpg" alwaysLoaded="false" smoothed="true" userAdded="true" file="one\final\wall_square.jpg" />
             <Resource kind="image" name="Car.png" alwaysLoaded="false" smoothed="true" userAdded="true" file="Car.png" />
+            <Resource kind="image" name="mask.png" alwaysLoaded="false" smoothed="true" userAdded="true" file="mask.png" />
         </Resources>
         <ResourceFolders />
     </Resources>
@@ -48,11 +49,25 @@
     <ObjectGroups />
     <Variables>
         <Variable Name="GameOver" Value="0" />
-        <Variable Name="temp" Value="0" />
+        <Variable Name="Ax" Value="0" />
+        <Variable Name="Ay" Value="0" />
+        <Variable Name="Lx" Value="0" />
+        <Variable Name="Ly" Value="0" />
+        <Variable Name="Bx" Value="0" />
+        <Variable Name="By" Value="0" />
+        <Variable Name="PHx" Value="0" />
+        <Variable Name="PHy" Value="0" />
+        <Variable Name="Px" Value="0" />
+        <Variable Name="Py" Value="0" />
+        <Variable Name="CheckThis" Value="0" />
+        <Variable Name="NewVariable" Value="0" />
+        <Variable Name="ModWall" Value="0" />
+        <Variable Name="CarMod" Value="0" />
+        <Variable Name="Subtract" Value="0" />
     </Variables>
     <Scenes firstScene="">
         <Scene nom="New scene" mangledName="New_32scene" r="209.000000" v="209.000000" b="209.000000" titre="" oglFOV="90.000000" oglZNear="1.000000" oglZFar="500.000000" standardSortMethod="true" stopSoundsOnStartup="true" disableInputWhenNotFocused="true">
-            <UISettings gridWidth="32.000000" grid="true" snap="true" gridHeight="32.000000" gridR="158.000000" gridG="180.000000" gridB="255.000000" zoomFactor="1.000000" windowMask="false" associatedLayout="" />
+            <UISettings gridWidth="32.000000" grid="true" snap="true" gridHeight="32.000000" gridR="158.000000" gridG="180.000000" gridB="255.000000" zoomFactor="1.000000" windowMask="true" associatedLayout="" />
             <GroupesObjets />
             <Objets>
                 <Objet nom="Car" type="Sprite">
@@ -92,9 +107,26 @@
                         </Animation>
                     </Animations>
                 </Objet>
-                <Objet nom="TextDebug" type="TextObject::Text" smoothed="true" bold="false" italic="false" underlined="false">
+                <Objet nom="SetToUpDown" type="Sprite">
                     <Variables />
-                    <String value="Text" />
+                    <Animations>
+                        <Animation typeNormal="false">
+                            <Direction boucle="false" tempsEntre="1.000000">
+                                <Sprites>
+                                    <Sprite image="mask.png">
+                                        <Points />
+                                        <PointOrigine nom="origine" X="0.000000" Y="0.000000" />
+                                        <PointCentre nom="centre" X="16.000000" Y="16.000000" automatic="true" />
+                                        <CustomCollisionMask custom="false" />
+                                    </Sprite>
+                                </Sprites>
+                            </Direction>
+                        </Animation>
+                    </Animations>
+                </Objet>
+                <Objet nom="DebugText" type="TextObject::Text" smoothed="true" bold="false" italic="false" underlined="false">
+                    <Variables />
+                    <String value="DebugText" />
                     <Font value="" />
                     <CharacterSize value="20" />
                     <Color r="255" g="255" b="255" />
@@ -618,7 +650,17 @@
                     <stringInfos />
                     <InitialVariables />
                 </Objet>
-                <Objet nom="TextDebug" x="736.000000" y="160.000000" plan="1" layer="" angle="0.000000" personalizedSize="false" width="0.000000" height="0.000000" locked="false">
+                <Objet nom="SetToUpDown" x="480.000000" y="32.000000" plan="1" layer="" angle="0.000000" personalizedSize="true" width="160.000000" height="541.000000" locked="false">
+                    <floatInfos />
+                    <stringInfos />
+                    <InitialVariables />
+                </Objet>
+                <Objet nom="DebugText" x="736.000000" y="224.000000" plan="1" layer="" angle="0.000000" personalizedSize="false" width="0.000000" height="0.000000" locked="false">
+                    <floatInfos />
+                    <stringInfos />
+                    <InitialVariables />
+                </Objet>
+                <Objet nom="SetToUpDown" x="288.000000" y="32.000000" plan="1" layer="" angle="0.000000" personalizedSize="true" width="160.000000" height="541.000000" locked="false">
                     <floatInfos />
                     <stringInfos />
                     <InitialVariables />
@@ -653,7 +695,7 @@
                     <Conditions>
                         <Condition>
                             <Type value="CollisionNP" Contraire="false" />
-                            <Parametre value="Car" />
+                            <Parametre value="SetToUpDown" />
                             <Parametre value="Wall" />
                             <Parametre value="" />
                             <Parametre value="" />
@@ -670,307 +712,8 @@
                     <Events>
                         <Event disabled="false" folded="false">
                             <Type value="BuiltinCommonInstructions::Standard" />
-                            <Conditions>
-                                <Condition>
-                                    <Type value="Egal" Contraire="false" />
-                                    <Parametre value="cos(Car.Variable(Angle))" />
-                                    <Parametre value="&lt;" />
-                                    <Parametre value="0" />
-                                </Condition>
-                            </Conditions>
+                            <Conditions />
                             <Actions />
-                            <Events>
-                                <Event disabled="false" folded="false">
-                                    <Type value="BuiltinCommonInstructions::Standard" />
-                                    <Conditions>
-                                        <Condition>
-                                            <Type value="Egal" Contraire="false" />
-                                            <Parametre value="mod(Car.Variable(Angle),90)" />
-                                            <Parametre value="&gt;=" />
-                                            <Parametre value="75" />
-                                        </Condition>
-                                    </Conditions>
-                                    <Actions />
-                                    <Events>
-                                        <Event disabled="false" folded="false">
-                                            <Type value="BuiltinCommonInstructions::Standard" />
-                                            <Conditions>
-                                                <Condition>
-                                                    <Type value="BuiltinCommonInstructions::Or" Contraire="false" />
-                                                    <SubConditions>
-                                                        <Condition>
-                                                            <Type value="Egal" Contraire="false" />
-                                                            <Parametre value="mod(Car.Variable(Angle), 360)" />
-                                                            <Parametre value="&lt;=" />
-                                                            <Parametre value="15" />
-                                                        </Condition>
-                                                        <Condition>
-                                                            <Type value="Egal" Contraire="false" />
-                                                            <Parametre value="mod(Car.Variable(Angle), 360)" />
-                                                            <Parametre value="&gt;=" />
-                                                            <Parametre value="345" />
-                                                        </Condition>
-                                                    </SubConditions>
-                                                </Condition>
-                                            </Conditions>
-                                            <Actions>
-                                                <Action>
-                                                    <Type value="ModVarObjet" />
-                                                    <Parametre value="Car" />
-                                                    <Parametre value="Angle" />
-                                                    <Parametre value="=" />
-                                                    <Parametre value="0" />
-                                                </Action>
-                                            </Actions>
-                                        </Event>
-                                        <Event disabled="false" folded="false">
-                                            <Type value="BuiltinCommonInstructions::Standard" />
-                                            <Conditions>
-                                                <Condition>
-                                                    <Type value="BuiltinCommonInstructions::And" Contraire="false" />
-                                                    <SubConditions>
-                                                        <Condition>
-                                                            <Type value="Egal" Contraire="false" />
-                                                            <Parametre value="mod(Car.Variable(Angle), 360)" />
-                                                            <Parametre value="&gt;=" />
-                                                            <Parametre value="75" />
-                                                        </Condition>
-                                                        <Condition>
-                                                            <Type value="Egal" Contraire="false" />
-                                                            <Parametre value="mod(Car.Variable(Angle), 360)" />
-                                                            <Parametre value="&lt;=" />
-                                                            <Parametre value="105" />
-                                                        </Condition>
-                                                    </SubConditions>
-                                                </Condition>
-                                            </Conditions>
-                                            <Actions>
-                                                <Action>
-                                                    <Type value="ModVarObjet" />
-                                                    <Parametre value="Car" />
-                                                    <Parametre value="Angle" />
-                                                    <Parametre value="=" />
-                                                    <Parametre value="90" />
-                                                </Action>
-                                            </Actions>
-                                        </Event>
-                                        <Event disabled="false" folded="false">
-                                            <Type value="BuiltinCommonInstructions::Standard" />
-                                            <Conditions>
-                                                <Condition>
-                                                    <Type value="BuiltinCommonInstructions::And" Contraire="false" />
-                                                    <SubConditions>
-                                                        <Condition>
-                                                            <Type value="Egal" Contraire="false" />
-                                                            <Parametre value="mod(Car.Variable(Angle), 360)" />
-                                                            <Parametre value="&gt;=" />
-                                                            <Parametre value="255" />
-                                                        </Condition>
-                                                        <Condition>
-                                                            <Type value="Egal" Contraire="false" />
-                                                            <Parametre value="mod(Car.Variable(Angle), 360)" />
-                                                            <Parametre value="&lt;=" />
-                                                            <Parametre value="285" />
-                                                        </Condition>
-                                                    </SubConditions>
-                                                </Condition>
-                                            </Conditions>
-                                            <Actions>
-                                                <Action>
-                                                    <Type value="ModVarObjet" />
-                                                    <Parametre value="Car" />
-                                                    <Parametre value="Angle" />
-                                                    <Parametre value="=" />
-                                                    <Parametre value="270" />
-                                                </Action>
-                                            </Actions>
-                                        </Event>
-                                        <Event disabled="false" folded="false">
-                                            <Type value="BuiltinCommonInstructions::Standard" />
-                                            <Conditions>
-                                                <Condition>
-                                                    <Type value="BuiltinCommonInstructions::And" Contraire="false" />
-                                                    <SubConditions>
-                                                        <Condition>
-                                                            <Type value="Egal" Contraire="false" />
-                                                            <Parametre value="mod(Car.Variable(Angle), 360)" />
-                                                            <Parametre value="&gt;=" />
-                                                            <Parametre value="165" />
-                                                        </Condition>
-                                                        <Condition>
-                                                            <Type value="Egal" Contraire="false" />
-                                                            <Parametre value="mod(Car.Variable(Angle), 360)" />
-                                                            <Parametre value="&lt;=" />
-                                                            <Parametre value="195" />
-                                                        </Condition>
-                                                    </SubConditions>
-                                                </Condition>
-                                            </Conditions>
-                                            <Actions>
-                                                <Action>
-                                                    <Type value="ModVarObjet" />
-                                                    <Parametre value="Car" />
-                                                    <Parametre value="Angle" />
-                                                    <Parametre value="=" />
-                                                    <Parametre value="180" />
-                                                </Action>
-                                            </Actions>
-                                        </Event>
-                                    </Events>
-                                </Event>
-                            </Events>
-                        </Event>
-                        <Event disabled="false" folded="false">
-                            <Type value="BuiltinCommonInstructions::Standard" />
-                            <Conditions>
-                                <Condition>
-                                    <Type value="Egal" Contraire="false" />
-                                    <Parametre value="cos(Car.Variable(Angle))" />
-                                    <Parametre value="&gt;" />
-                                    <Parametre value="0" />
-                                </Condition>
-                            </Conditions>
-                            <Actions />
-                            <Events>
-                                <Event disabled="false" folded="false">
-                                    <Type value="BuiltinCommonInstructions::Standard" />
-                                    <Conditions>
-                                        <Condition>
-                                            <Type value="Egal" Contraire="false" />
-                                            <Parametre value="mod(Car.Variable(Angle),90)" />
-                                            <Parametre value="&lt;=" />
-                                            <Parametre value="15" />
-                                        </Condition>
-                                    </Conditions>
-                                    <Actions />
-                                    <Events>
-                                        <Event disabled="false" folded="false">
-                                            <Type value="BuiltinCommonInstructions::Standard" />
-                                            <Conditions>
-                                                <Condition>
-                                                    <Type value="BuiltinCommonInstructions::Or" Contraire="false" />
-                                                    <SubConditions>
-                                                        <Condition>
-                                                            <Type value="Egal" Contraire="false" />
-                                                            <Parametre value="mod(Car.Variable(Angle), 360)" />
-                                                            <Parametre value="&lt;=" />
-                                                            <Parametre value="15" />
-                                                        </Condition>
-                                                        <Condition>
-                                                            <Type value="Egal" Contraire="false" />
-                                                            <Parametre value="mod(Car.Variable(Angle), 360)" />
-                                                            <Parametre value="&gt;=" />
-                                                            <Parametre value="345" />
-                                                        </Condition>
-                                                    </SubConditions>
-                                                </Condition>
-                                            </Conditions>
-                                            <Actions>
-                                                <Action>
-                                                    <Type value="ModVarObjet" />
-                                                    <Parametre value="Car" />
-                                                    <Parametre value="Angle" />
-                                                    <Parametre value="=" />
-                                                    <Parametre value="0" />
-                                                </Action>
-                                            </Actions>
-                                        </Event>
-                                        <Event disabled="false" folded="false">
-                                            <Type value="BuiltinCommonInstructions::Standard" />
-                                            <Conditions>
-                                                <Condition>
-                                                    <Type value="BuiltinCommonInstructions::And" Contraire="false" />
-                                                    <SubConditions>
-                                                        <Condition>
-                                                            <Type value="Egal" Contraire="false" />
-                                                            <Parametre value="mod(Car.Variable(Angle), 360)" />
-                                                            <Parametre value="&gt;=" />
-                                                            <Parametre value="75" />
-                                                        </Condition>
-                                                        <Condition>
-                                                            <Type value="Egal" Contraire="false" />
-                                                            <Parametre value="mod(Car.Variable(Angle), 360)" />
-                                                            <Parametre value="&lt;=" />
-                                                            <Parametre value="105" />
-                                                        </Condition>
-                                                    </SubConditions>
-                                                </Condition>
-                                            </Conditions>
-                                            <Actions>
-                                                <Action>
-                                                    <Type value="ModVarObjet" />
-                                                    <Parametre value="Car" />
-                                                    <Parametre value="Angle" />
-                                                    <Parametre value="=" />
-                                                    <Parametre value="90" />
-                                                </Action>
-                                            </Actions>
-                                        </Event>
-                                        <Event disabled="false" folded="false">
-                                            <Type value="BuiltinCommonInstructions::Standard" />
-                                            <Conditions>
-                                                <Condition>
-                                                    <Type value="BuiltinCommonInstructions::And" Contraire="false" />
-                                                    <SubConditions>
-                                                        <Condition>
-                                                            <Type value="Egal" Contraire="false" />
-                                                            <Parametre value="mod(Car.Variable(Angle), 360)" />
-                                                            <Parametre value="&gt;=" />
-                                                            <Parametre value="165" />
-                                                        </Condition>
-                                                        <Condition>
-                                                            <Type value="Egal" Contraire="false" />
-                                                            <Parametre value="mod(Car.Variable(Angle), 360)" />
-                                                            <Parametre value="&lt;=" />
-                                                            <Parametre value="195" />
-                                                        </Condition>
-                                                    </SubConditions>
-                                                </Condition>
-                                            </Conditions>
-                                            <Actions>
-                                                <Action>
-                                                    <Type value="ModVarObjet" />
-                                                    <Parametre value="Car" />
-                                                    <Parametre value="Angle" />
-                                                    <Parametre value="=" />
-                                                    <Parametre value="180" />
-                                                </Action>
-                                            </Actions>
-                                        </Event>
-                                        <Event disabled="false" folded="false">
-                                            <Type value="BuiltinCommonInstructions::Standard" />
-                                            <Conditions>
-                                                <Condition>
-                                                    <Type value="BuiltinCommonInstructions::And" Contraire="false" />
-                                                    <SubConditions>
-                                                        <Condition>
-                                                            <Type value="Egal" Contraire="false" />
-                                                            <Parametre value="mod(Car.Variable(Angle), 360)" />
-                                                            <Parametre value="&gt;=" />
-                                                            <Parametre value="255" />
-                                                        </Condition>
-                                                        <Condition>
-                                                            <Type value="Egal" Contraire="false" />
-                                                            <Parametre value="mod(Car.Variable(Angle), 360)" />
-                                                            <Parametre value="&lt;=" />
-                                                            <Parametre value="285" />
-                                                        </Condition>
-                                                    </SubConditions>
-                                                </Condition>
-                                            </Conditions>
-                                            <Actions>
-                                                <Action>
-                                                    <Type value="ModVarObjet" />
-                                                    <Parametre value="Car" />
-                                                    <Parametre value="Angle" />
-                                                    <Parametre value="=" />
-                                                    <Parametre value="270" />
-                                                </Action>
-                                            </Actions>
-                                        </Event>
-                                    </Events>
-                                </Event>
-                            </Events>
                         </Event>
                     </Events>
                 </Event>
@@ -990,7 +733,7 @@
                                     <Parametre value="Car" />
                                     <Parametre value="Speed" />
                                     <Parametre value="&gt;" />
-                                    <Parametre value="15" />
+                                    <Parametre value="30" />
                                 </Condition>
                             </SubConditions>
                         </Condition>
@@ -1002,6 +745,13 @@
                             <Parametre value="Angle" />
                             <Parametre value="+" />
                             <Parametre value="2" />
+                        </Action>
+                        <Action>
+                            <Type value="ModVarObjet" />
+                            <Parametre value="Car" />
+                            <Parametre value="Speed" />
+                            <Parametre value="-" />
+                            <Parametre value="1.25" />
                         </Action>
                     </Actions>
                 </Event>
@@ -1079,6 +829,48 @@
                     <Events>
                         <Event disabled="false" folded="false">
                             <Type value="BuiltinCommonInstructions::Standard" />
+                            <Conditions>
+                                <Condition>
+                                    <Type value="VarObjet" Contraire="false" />
+                                    <Parametre value="Car" />
+                                    <Parametre value="Angle" />
+                                    <Parametre value="&gt;" />
+                                    <Parametre value="360" />
+                                </Condition>
+                            </Conditions>
+                            <Actions>
+                                <Action>
+                                    <Type value="ModVarObjet" />
+                                    <Parametre value="Car" />
+                                    <Parametre value="Angle" />
+                                    <Parametre value="-" />
+                                    <Parametre value="360" />
+                                </Action>
+                            </Actions>
+                        </Event>
+                        <Event disabled="false" folded="false">
+                            <Type value="BuiltinCommonInstructions::Standard" />
+                            <Conditions>
+                                <Condition>
+                                    <Type value="VarObjet" Contraire="false" />
+                                    <Parametre value="Car" />
+                                    <Parametre value="Angle" />
+                                    <Parametre value="&lt;" />
+                                    <Parametre value="0" />
+                                </Condition>
+                            </Conditions>
+                            <Actions>
+                                <Action>
+                                    <Type value="ModVarObjet" />
+                                    <Parametre value="Car" />
+                                    <Parametre value="Angle" />
+                                    <Parametre value="+" />
+                                    <Parametre value="360" />
+                                </Action>
+                            </Actions>
+                        </Event>
+                        <Event disabled="false" folded="false">
+                            <Type value="BuiltinCommonInstructions::Standard" />
                             <Conditions />
                             <Actions>
                                 <Action>
@@ -1108,21 +900,144 @@
                                     <Parametre value="=" />
                                     <Parametre value="Car.Variable(Angle)-90" />
                                 </Action>
-                                <Action>
-                                    <Type value="ModVarGlobal" />
-                                    <Parametre value="temp" />
-                                    <Parametre value="=" />
-                                    <Parametre value="mod(Car.Variable(Angle),90)" />
-                                </Action>
-                                <Action>
-                                    <Type value="TextObject::String" />
-                                    <Parametre value="TextDebug" />
-                                    <Parametre value="=" />
-                                    <Parametre value="GlobalVariableString(temp)" />
-                                </Action>
                             </Actions>
                         </Event>
                     </Events>
+                </Event>
+                <Event disabled="false" folded="false">
+                    <Type value="BuiltinCommonInstructions::Standard" />
+                    <Conditions>
+                        <Condition>
+                            <Type value="CollisionNP" Contraire="false" />
+                            <Parametre value="Car" />
+                            <Parametre value="SetToUpDown" />
+                            <Parametre value="" />
+                            <Parametre value="" />
+                        </Condition>
+                    </Conditions>
+                    <Actions>
+                        <Action>
+                            <Type value="ModVarGlobal" />
+                            <Parametre value="ModWall" />
+                            <Parametre value="=" />
+                            <Parametre value="mod(SetToUpDown.Direction()+180, 360)" />
+                        </Action>
+                        <Action>
+                            <Type value="ModVarGlobal" />
+                            <Parametre value="CarMod" />
+                            <Parametre value="=" />
+                            <Parametre value="mod(Car.Direction(), 360)" />
+                        </Action>
+                        <Action>
+                            <Type value="ModVarGlobal" />
+                            <Parametre value="Subtract" />
+                            <Parametre value="=" />
+                            <Parametre value="(GlobalVariable(ModWall)-GlobalVariable(CarMod))/2" />
+                        </Action>
+                    </Actions>
+                    <Events>
+                        <Event disabled="false" folded="false">
+                            <Type value="BuiltinCommonInstructions::Standard" />
+                            <Conditions>
+                                <Condition>
+                                    <Type value="VarGlobal" Contraire="false" />
+                                    <Parametre value="Subtract" />
+                                    <Parametre value="&lt;" />
+                                    <Parametre value="0" />
+                                </Condition>
+                            </Conditions>
+                            <Actions>
+                                <Action>
+                                    <Type value="ModVarGlobal" />
+                                    <Parametre value="Subtract" />
+                                    <Parametre value="*" />
+                                    <Parametre value="-1" />
+                                </Action>
+                            </Actions>
+                        </Event>
+                        <Event disabled="false" folded="false">
+                            <Type value="BuiltinCommonInstructions::Standard" />
+                            <Conditions>
+                                <Condition>
+                                    <Type value="VarGlobal" Contraire="false" />
+                                    <Parametre value="Subtract" />
+                                    <Parametre value="!=" />
+                                    <Parametre value="0" />
+                                </Condition>
+                            </Conditions>
+                            <Actions />
+                            <Events>
+                                <Event disabled="false" folded="false">
+                                    <Type value="BuiltinCommonInstructions::Standard" />
+                                    <Conditions>
+                                        <Condition>
+                                            <Type value="BuiltinCommonInstructions::And" Contraire="false" />
+                                            <SubConditions>
+                                                <Condition>
+                                                    <Type value="VarGlobal" Contraire="false" />
+                                                    <Parametre value="Subtract" />
+                                                    <Parametre value="&gt;=" />
+                                                    <Parametre value="90" />
+                                                </Condition>
+                                            </SubConditions>
+                                        </Condition>
+                                    </Conditions>
+                                    <Actions>
+                                        <Action>
+                                            <Type value="ModVarObjet" />
+                                            <Parametre value="Car" />
+                                            <Parametre value="Angle" />
+                                            <Parametre value="+" />
+                                            <Parametre value="1" />
+                                        </Action>
+                                    </Actions>
+                                </Event>
+                                <Event disabled="false" folded="false">
+                                    <Type value="BuiltinCommonInstructions::Standard" />
+                                    <Conditions>
+                                        <Condition>
+                                            <Type value="BuiltinCommonInstructions::And" Contraire="false" />
+                                            <SubConditions>
+                                                <Condition>
+                                                    <Type value="VarGlobal" Contraire="false" />
+                                                    <Parametre value="Subtract" />
+                                                    <Parametre value="&lt;" />
+                                                    <Parametre value="90" />
+                                                </Condition>
+                                            </SubConditions>
+                                        </Condition>
+                                    </Conditions>
+                                    <Actions>
+                                        <Action>
+                                            <Type value="ModVarObjet" />
+                                            <Parametre value="Car" />
+                                            <Parametre value="Angle" />
+                                            <Parametre value="-" />
+                                            <Parametre value="1" />
+                                        </Action>
+                                    </Actions>
+                                </Event>
+                            </Events>
+                        </Event>
+                    </Events>
+                </Event>
+                <Event disabled="false" folded="false">
+                    <Type value="BuiltinCommonInstructions::Standard" />
+                    <Conditions />
+                    <Actions>
+                        <Action>
+                            <Type value="ModVarGlobal" />
+                            <Parametre value="NewVariable" />
+                            <Parametre value="=" />
+                            <Parametre value="GlobalVariable(CarMod)" />
+                        </Action>
+                        <Action>
+                            <Type value="TextObject::String" />
+                            <Parametre value="DebugText" />
+                            <Parametre value="=" />
+                            <Parametre value="GlobalVariableString(NewVariable)" />
+                        </Action>
+                    </Actions>
                 </Event>
             </Events>
         </Scene>
